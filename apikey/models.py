@@ -15,7 +15,7 @@ class ApiKeyManager(models.Manager):
         if self.filter(key=key).count() > 0:
             key = self._generate_key()
 
-        self.create(user=user, key=key)
+        return self.create(user=user, key=key)
 
 
 class ApiKey(models.Model):
