@@ -12,7 +12,7 @@ class ApiKeyAuthentication(object):
         auth_header = getattr(
             settings, 'APIKEY_AUTHORIZATION_HEADER', 'Authorization')
 
-        auth_header = auth_header.upper().replace('-', '_')
+        auth_header = ('Http-%s' % (auth_header, )).upper().replace('-', '_')
 
         if auth_header not in request.META:
             return False

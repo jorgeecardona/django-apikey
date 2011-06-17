@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(name='django-apikey',
       description='Simplification of github.com/scoursen/django-apikey',
-      version='0.1.4',
+      version='0.1.5',
       url='https://www.github.com/jorgeecardona/django-apikey',
       packages=find_packages(),
       author='Jorge Eduardo Cardona',
