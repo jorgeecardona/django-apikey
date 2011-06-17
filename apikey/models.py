@@ -6,7 +6,7 @@ from random import randint
 class ApiKeyManager(models.Manager):
 
     def _generate_key(self):
-        return sha1(randint(0, (16 ** 40) - 1)).hexdigest()
+        return sha1(str(randint(0, (16 ** 40) - 1))).hexdigest()
 
     def generate(self, user):
 
