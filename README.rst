@@ -40,7 +40,7 @@ To add api authentication with piston do thisin your handlers.
     from myapp.models import Item
     
     class ItemHandler(BaseHandler):
-        fields = ('GET', )
+        allowed = ('GET', )
         model = Item
     
         def read(self):
