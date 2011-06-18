@@ -1,17 +1,22 @@
+django-apikey
+=============
+Key authentication for django. Can be used with django-piston easily.
 
-# django-apikey
-
-Basic key authentication for django. 
 Based on https://github.com/scoursen/django-apikey.
 
 
-## Installation
+Installation
+------------
+::
 
     pip install django-apikey
 
-## Configuration
+
+Configuration
+-------------
 
 Add 'apikey' to your settings.py:
+::
 
     INSTALLED_APPS = (
     ...
@@ -19,11 +24,15 @@ Add 'apikey' to your settings.py:
     ....
     )
 
+
 You can change the authorization header by setting the APIKEY_AUTHORIZATION_HEADER in settings.py:
+::
 
     APIKEY_AUTHORIZATION_HEADER = 'App-Authorization'
 
+
 To add api authentication with piston do thisin your handlers.
+::
 
     from apikey.auth import ApiKeyAuthentication
     from piston.handler import BaseHandler
@@ -40,10 +49,13 @@ To add api authentication with piston do thisin your handlers.
     handler = Resource(
         handler=ItemHandler, authentication=ApiKeyAuthentication())
 
-## Thanks
+
+Thanks
+------
 
 This project is base on the one of Steve Course https://github.com/scoursen/django-apikey but with several simplifications.
 
-## License
+License
+-------
 
 This software is licensed  under the New BSD License.

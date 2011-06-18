@@ -23,7 +23,7 @@ class ApiKeyAuthentication(object):
             key = ApiKey.objects.get(key=auth_string, is_active=True)
             request.user = key.user
             return True
-        except:
+        except ApiKey.DoesNotExist:
             request.user = AnonymousUser()
             return False
 
