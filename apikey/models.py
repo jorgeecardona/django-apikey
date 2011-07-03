@@ -32,3 +32,29 @@ class ApiKey(models.Model):
 
     # Objects.
     objects = ApiKeyManager()
+
+
+class TokenManager(models.Manager):
+
+    def _generate(self):
+        return sha1(str(randint(0, (16 ** 80) - 1))).hexdigest()
+
+    def generate(self, user):
+        token = self._generate()
+        return self.create(user=user, token=token)
+
+
+class Token(models.Model):
+    " Token. "
+
+    #: User that creates the token.
+    user = models.ForeignKey('auth.Token', related_name='api_tokens')
+
+    #: Token.
+    token = models.CharField(max_length=80)
+
+    #: IP Address that creates the token.
+    ip = models.IPAddressField(null=True, default=None)
+
+    #: Last used time.
+    last_used = models.DateTimeField(auto_now=True)

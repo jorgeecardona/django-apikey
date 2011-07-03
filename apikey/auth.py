@@ -1,7 +1,43 @@
 from django.http import HttpResponse
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
-from apikey.models import ApiKey
+from apikey.models import ApiKey, Token
+from datetime import datetime, timedelta
+
+
+class TokenAuthentication(object):
+
+    def is_authenticated(self, request):
+        " Check if request is authenticated."
+
+        auth_header = getattr(
+            settings, 'TOKEN_AUTH_HEADER', 'X-Auth-Token')
+
+        auth_header = ('Http-%s' % (auth_header, )).upper().replace('-', '_')
+
+        if auth_header not in request.META:
+            return False
+
+        auth_string = request.META.get(auth_header)
+
+        limit = datetime.now() - timedelta(0, int(getattr(
+            settings, 'TOKEN_VALID_SECONDS', '3600')))
+
+        try:
+            key = Token.objects.get(token=auth_string, last_used__gt=limit)
+
+            # Update last_used.
+            key.save()
+            request.user = key.user
+            return True
+        except Token.DoesNotExist:
+            request.user = AnonymousUser()
+            return False
+
+    def challenge(self):
+        resp = HttpResponse('Authorization Required')
+        resp.status_code = 401
+        return resp
 
 
 class ApiKeyAuthentication(object):
