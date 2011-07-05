@@ -1,0 +1,16 @@
+[
+  {
+    "model": "app.item",
+    "pk": 1,
+    "fields": {
+      "name": "An Item."
+    }
+  },
+  {
+    "model": "app.item",
+    "pk": 2,
+    "fields": {
+      "name": "Another Item."
+    }
+  }
+]

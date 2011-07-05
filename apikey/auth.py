@@ -5,23 +5,24 @@ from apikey.models import ApiKey, Token
 from datetime import datetime, timedelta
 
 
+TOKEN_AUTH_HEADER = getattr(settings, 'TOKEN_AUTH_HEADER', 'X-Auth-Token')
+TOKEN_VALID_SECONDS = getattr(settings, 'TOKEN_VALID_SECONDS', 3600)
+
+
 class TokenAuthentication(object):
 
     def is_authenticated(self, request):
         " Check if request is authenticated."
 
-        auth_header = getattr(
-            settings, 'TOKEN_AUTH_HEADER', 'X-Auth-Token')
-
-        auth_header = ('Http-%s' % (auth_header, )).upper().replace('-', '_')
+        auth_header = ('Http-%s' % (
+            TOKEN_AUTH_HEADER, )).upper().replace('-', '_')
 
         if auth_header not in request.META:
             return False
 
         auth_string = request.META.get(auth_header)
 
-        limit = datetime.now() - timedelta(0, int(getattr(
-            settings, 'TOKEN_VALID_SECONDS', '3600')))
+        limit = datetime.now() - timedelta(0, TOKEN_VALID_SECONDS)
 
         try:
             key = Token.objects.get(token=auth_string, last_used__gt=limit)
@@ -30,6 +31,7 @@ class TokenAuthentication(object):
             key.save()
             request.user = key.user
             return True
+
         except Token.DoesNotExist:
             request.user = AnonymousUser()
             return False

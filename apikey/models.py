@@ -1,6 +1,11 @@
 from django.db import models
 from hashlib import sha1
-from random import randint
+from random import randint, choice
+from string import letters, digits
+from django.conf import settings
+
+# Validate TOKEN_SIZE
+TOKEN_SIZE = getattr(settings, 'TOKEN_SIZE', 60)
 
 
 class ApiKeyManager(models.Manager):
@@ -37,24 +42,27 @@ class ApiKey(models.Model):
 class TokenManager(models.Manager):
 
     def _generate(self):
-        return sha1(str(randint(0, (16 ** 80) - 1))).hexdigest()
+        return ''.join([choice(letters + digits) for i in range(TOKEN_SIZE)])
 
-    def generate(self, user):
+    def create(self, user):
         token = self._generate()
-        return self.create(user=user, token=token)
+        return super(TokenManager, self).create(user=user, token=token)
 
 
 class Token(models.Model):
     " Token. "
 
     #: User that creates the token.
-    user = models.ForeignKey('auth.Token', related_name='api_tokens')
+    user = models.ForeignKey('auth.User', related_name='api_tokens')
 
     #: Token.
-    token = models.CharField(max_length=80)
+    token = models.CharField(max_length=TOKEN_SIZE)
 
     #: IP Address that creates the token.
     ip = models.IPAddressField(null=True, default=None)
 
     #: Last used time.
     last_used = models.DateTimeField(auto_now=True)
+
+    #: Objects Manager.
+    objects = TokenManager()
